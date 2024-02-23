@@ -49,7 +49,7 @@ router.put('/:id', async (req, res) => {
 });
 
 //Delete user by id
-router.put('/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
         const result = await User.findByIdAndDelete(req.params.id)
         if (!result) {
@@ -65,12 +65,22 @@ router.put('/:id', async (req, res) => {
 router.post('/:userId/friends/:friendId', async (req, res) => {
     try {
         const { userId, friendId } = req.params
+
+        if (userId === friendId) {
+            return res.status(400).json({ message: "Cannot add yourself as a friend" });
+        }
+        const user = await User.findById(userId);
+        const friend = await User.findById(friendId);
+
+        if (!user || !friend) {
+            return res.status(404).json({ message: 'User or friend not found' });
+        }
+
+        if (user.friends.includes(friendId)) {
+            return res.status(400).json({ message: 'Friend already added' });
+        }
         const result = await User.findByIdAndUpdate(userId,
-            {
-                $push: {
-                    friends: friendId
-                }
-            },
+            { $push: { friends: friendId } },
             { new: true })
         if (!result) {
             return res.status(404).json({ message: 'User not found' })
@@ -86,11 +96,7 @@ router.delete('/:userId/friends/:friendId', async (req, res) => {
     try {
         const { userId, friendId } = req.params
         const result = await User.findByIdAndUpdate(userId,
-            {
-                $pull: {
-                    friends: friendId
-                }
-            },
+            { $pull: { friends: friendId } },
             { new: true })
         if (!result) {
             return res.status(404).json({ message: 'User not found' })
@@ -100,7 +106,5 @@ router.delete('/:userId/friends/:friendId', async (req, res) => {
         res.status(500).json({ error: error.message })
     }
 });
-
-
 
 module.exports = router;
