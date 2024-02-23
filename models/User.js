@@ -1,30 +1,32 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  name: { 
+  name: {
     type: String,
     unique: true,
     required: true,
     trim: true
- },
- email: { 
+  },
+  email: {
     type: String,
     unique: true,
     required: [true, 'Email is required'],
-    validator: function(email) {
+    validate: {
+      validator: function (email) {
         return /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(email)
-    }, message: props => `${props.value} is not a valid email.`
- },
- thoughts: [{
-    type: mongoose.Schema.Types.ObjectId, 
+      }, message: props => `${props.value} is not a valid email.`
+    }
+  },
+  thoughts: [{
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Thought'
- }],
- friends: [{
-    type: mongoose.Schema.Types.ObjectId, 
+  }],
+  friends: [{
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
- }]
+  }]
 },
-{
+  {
     toJSON: {
       virtuals: true,
     },

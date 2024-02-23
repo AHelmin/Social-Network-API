@@ -37,7 +37,7 @@ router.post("/", async (req, res) => {
         const addToUser = await User.findByIdAndUpdate(userId,
             { $push: { thoughts: newThought._id }},
             { new: true })
-        res.json({ result, addToUser })
+        res.json({ result })
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -69,7 +69,7 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-//Add a new friend to a user's friend list
+//Add a new reaction to a thought list
 router.post('/:thoughtId/reactions', async (req, res) => {
     try {
         const { thoughtId }= req.params
@@ -86,7 +86,7 @@ router.post('/:thoughtId/reactions', async (req, res) => {
     }
 });
 
-//Delete a friend from a user's friend list
+//Delete a reaction from a thought list
 router.delete('/:thoughtId/reactions/:reactionId', async (req, res) => {
     try {
         const { thoughtId, reactionId } = req.params
