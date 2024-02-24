@@ -29,7 +29,7 @@ router.get('/:id', async (req, res) => {
 router.post("/", async (req, res) => {
     try {
         const result = await User.create(req.body);
-        res.json({ result })
+        res.status(200).json({ message: 'User added successfully', user: result })
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -55,7 +55,13 @@ router.delete('/:id', async (req, res) => {
         if (!result) {
             return res.status(404).json({ message: 'User not found' })
         }
-        res.status(200).json({ message: 'User deleted successfully', user: result })
+        const removeThoughtsFromUser = await Thought.deleteMany({ userId: req.params.id });
+
+        if (removeThoughtsFromUser.deletedCount === 0) {
+            res.status(404).json({ message: 'User deleted successfully. No thoughts found to delete', user: result });
+        } else {
+            res.status(200).json({ message: 'User deleted successfully', user: result, thoughtsDeleted: removeThoughtsFromUser.deletedCount });
+        }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

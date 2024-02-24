@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const reactionSchema = new mongoose.Schema(
     {
-        reactionId: {
+        _id: {
             type: Schema.Types.ObjectId,
             default: () => new mongoose.Types.ObjectId()
         },
@@ -63,6 +63,10 @@ const thoughtSchema = new mongoose.Schema(
             }
         },
         username: {
+            type: String,
+            required: true
+        },
+        userId: {
             type: String,
             required: true
         },
